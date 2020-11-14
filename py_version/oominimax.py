@@ -135,9 +135,34 @@ class Event(Interface):
     def __init__(self):
         super().__init__()
 
-        self.h_choice = ""
-        self.c_choice = ""
-        self.first = ""
+        self.__h_choice = ""
+        self.__c_choice = ""
+        self.__first = ""
+
+    @property
+    def c_choice(self):
+        return self.__c_choice
+
+    @c_choice.setter
+    def c_choice(self, choice):
+        self.__c_choice = choice
+
+    @property
+    def first(self):
+        return self.__first
+
+    @first.setter
+    def first(self, pos):
+        self.__first = pos
+
+    @property
+    def h_choice(self):
+        return self.__h_choice
+
+    @h_choice.setter
+    def h_choice(self, choice):
+        self.__h_choice = choice
+
 
     def ai_turn(self):
         """
@@ -284,7 +309,6 @@ class Event(Interface):
                 exit()
             except (KeyError, ValueError):
                 print("Bad choice")
-
         if self.h_choice == "X":
             self.c_choice = "O"
         else:
@@ -352,7 +376,13 @@ class State(Interface):
         self.state = state
 
     def __new__(cls, *args, **kwargs):
-        pass
+        """
+        Override the __new__ method from class Interface since the board can
+        have multiple instances of class State
+        :param args:
+        :param kwargs:
+        """
+        return super(Interface, cls).__new__(cls)
 
     @property
     def coordinate(self):
