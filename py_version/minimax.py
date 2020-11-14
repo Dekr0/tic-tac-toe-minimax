@@ -14,8 +14,8 @@ Year: 2017
 License: GNU GENERAL PUBLIC LICENSE (GPL)
 
 Example:
-Paul Lu
-CCID:  paullu
+Chengxuan Li
+CCID:  chengxua
 """
 
 HUMAN = -1
@@ -53,17 +53,23 @@ def wins(state, player):
     :param player: a human or a computer
     :return: True if the player wins
     """
+    # all possibilities to win a tic-toe game
     win_state = [
-        [state[0][0], state[0][1], state[0][2]],
-        [state[1][0], state[1][1], state[1][2]],
-        [state[2][0], state[2][1], state[2][2]],
-        [state[0][0], state[1][0], state[2][0]],
-        [state[0][1], state[1][1], state[2][1]],
-        [state[0][2], state[1][2], state[2][2]],
-        [state[0][0], state[1][1], state[2][2]],
-        [state[2][0], state[1][1], state[0][2]],
+        [state[0][0], state[0][1], state[0][2]],  # row
+        [state[1][0], state[1][1], state[1][2]],  # row
+        [state[2][0], state[2][1], state[2][2]],  # row
+        [state[0][0], state[1][0], state[2][0]],  # col
+        [state[0][1], state[1][1], state[2][1]],  # col
+        [state[0][2], state[1][2], state[2][2]],  # col
+        [state[0][0], state[1][1], state[2][2]],  # diag
+        [state[2][0], state[1][1], state[0][2]],  # diag
     ]
     if [player, player, player] in win_state:
+        # win, 3 in a row marked as either -1 or 1
+        # all col in a row are marked as either all -1 or all 1
+        # all row in a col are marked as either all -1 or all 1
+        # either 2 diag are marked as either all -1 or all 1
+        # should be another function mark or change the value of one slot
         return True
     else:
         return False
@@ -86,10 +92,11 @@ def empty_cells(state):
     """
     cells = []
 
-    for x, row in enumerate(state):
+    for x, row in enumerate(state):  # enumerate, x - index for each row; row - a list
         for y, cell in enumerate(row):
+            # y - index for each column in all rows; cell - element / spot in each list / row
             if cell == 0:
-                cells.append([x, y])
+                cells.append([x, y])  # append coordinate of empty cell into cells array
 
     return cells
 
@@ -131,10 +138,11 @@ def minimax(state, depth, player):
     :return: a list with [the best row, best col, best score]
     """
     if player == COMP:
-        best = [-1, -1, -infinity]
+        best = [-1, -1, -infinity]  # initialize best move? if return, it is an invalid move
     else:
         best = [-1, -1, +infinity]
 
+    # base case?
     if depth == 0 or game_over(state):
         score = evaluate(state)
         return [-1, -1, score]
@@ -185,8 +193,8 @@ def render(state, c_choice, h_choice):
     str_line = '---------------'
 
     print('\n' + str_line)
-    for row in state:
-        for cell in row:
+    for row in state:  # each row in board - an list with 3 elements
+        for cell in row:  # each col in one row - individual element in one of the three list
             symbol = chars[cell]
             print(f'| {symbol} |', end='')
         print('\n' + str_line)
@@ -200,7 +208,7 @@ def ai_turn(c_choice, h_choice):
     :param h_choice: human's choice X or O
     :return:
     """
-    depth = len(empty_cells(board))
+    depth = len(empty_cells(board))  # flag for number of empty cell and win possibilities analysis
     if depth == 0 or game_over(board):
         return
 
@@ -209,13 +217,14 @@ def ai_turn(c_choice, h_choice):
     render(board, c_choice, h_choice)
 
     if depth == 9:
+        # ai first? If all cells are unselected, then, pick a random spot to start
         x = choice([0, 1, 2])
         y = choice([0, 1, 2])
     else:
         move = minimax(board, depth, COMP)
         x, y = move[0], move[1]
 
-    set_move(x, y, COMP)
+    set_move(x, y, COMP)  # invalid move won't trigger event for ai
     # Paul Lu.  Go full speed.
     # time.sleep(1)
 
@@ -227,26 +236,26 @@ def human_turn(c_choice, h_choice):
     :param h_choice: human's choice X or O
     :return:
     """
-    depth = len(empty_cells(board))
+    depth = len(empty_cells(board))  # flag? for the case that ai first and human second
     if depth == 0 or game_over(board):
         return
 
     # Dictionary of valid moves
-    move = -1
+    move = -1  # flag value and determine which slot the player want to move
     moves = {
         1: [0, 0], 2: [0, 1], 3: [0, 2],
         4: [1, 0], 5: [1, 1], 6: [1, 2],
         7: [2, 0], 8: [2, 1], 9: [2, 2],
-    }
+    }  # grid - coordinates for each slot
 
     clean()
-    print(f'Human turn [{h_choice}]')
-    render(board, c_choice, h_choice)
+    print(f'Human turn [{h_choice}]')  # f'', another way to format string
+    render(board, c_choice, h_choice)  # render the board in the terminal
 
     while move < 1 or move > 9:
         try:
-            move = int(input('Use numpad (1..9): '))
-            coord = moves[move]
+            move = int(input('Use numpad (1..9): '))  # pick the slot to be moved
+            coord = moves[move]  # coordinate of the slot
             can_move = set_move(coord[0], coord[1], HUMAN)
 
             if not can_move:
@@ -261,15 +270,15 @@ def human_turn(c_choice, h_choice):
 
 def main():
     """
-    Main function that calls all functions
+    main function that calls all functions
     """
     # Paul Lu.  Set the seed to get deterministic behaviour for each run.
     #       Makes it easier for testing and tracing for understanding.
     randomseed(274 + 2020)
 
     clean()
-    h_choice = ''  # X or O
-    c_choice = ''  # X or O
+    h_choice = ''  # X or O - human choice
+    c_choice = ''  # X or O - computer choice
     first = ''  # if human is the first
 
     # Human chooses X or O to play
@@ -302,6 +311,7 @@ def main():
 
     # Main loop of this game
     while len(empty_cells(board)) > 0 and not game_over(board):
+        # loop until no empty cells and either human or ai wins
         if first == 'N':
             ai_turn(c_choice, h_choice)
             first = ''
