@@ -1,3 +1,10 @@
+# ---------------------------------------------------
+#   Name : Chengxuan Li
+#   ID: 1631060
+#   CMPUT 274, Fall 2020
+#
+#   Weekly Exercise 6 : Object-Oriented Minimax
+# ---------------------------------------------------
 from math import inf
 from random import choice
 from random import seed
@@ -29,13 +36,10 @@ class Interface(object):
 
 class Board(Interface):
 
-    def __init__(self):
+    def __init__(self, size=(3,3)):
         super().__init__()
 
-        row = 3
-        col = 3
-
-        self.board = (row, col)
+        self.board = size
 
     def empty_cells(self):
         """
