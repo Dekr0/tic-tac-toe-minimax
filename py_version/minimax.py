@@ -15,7 +15,7 @@ License: GNU GENERAL PUBLIC LICENSE (GPL)
 
 Example:
 Chengxuan Li
-CCID:  chengxua
+CCID: chengxua
 """
 
 HUMAN = -1
